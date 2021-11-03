@@ -2,27 +2,36 @@ import mammoth # docx → html
 import os # create file
 import glob # read file name
 import base64
-
-# import cv2
-# import numpy as np
+import cv2
+import numpy as np
 import io
+import uuid
 
 from bs4 import BeautifulSoup # html linter
 from bs4 import Tag
 
 import re #regular expression
 
+os.makedirs('images')
+
 def convert_image(image):
 
-    encode_file=r"imageencode.txt"
 
     with image.open() as image_bytes:
-        encoded_src = base64.b64encode(image_bytes.read()).decode("ascii")
-        directory = (os.getcwd())
-        image_path = directory + '/images/' '*' + 'g' + '*' + '.jpg'
-        files = glob.glob(image_path)
-    with open(encode_file,"wb") as f:
-        f.write(encoded_src)
+        # encoded_src = base64.b64encode(image_bytes.read()).decode("ascii")
+        encoded_src = image_bytes.read()
+        # directory = (os.getcwd())
+        # image_path = directory + '/images/' '*' + 'g' + '*' + '.jpg'
+        # files = glob.glob(image_path)
+        uniqid = str(uuid.uuid4())
+        image_file=r"images/" + uniqid + ".jpg"
+        # img_binary = base64.b64decode(encoded_src)
+        img_binary = encoded_src
+        jpg=np.frombuffer(img_binary,dtype=np.uint8)
+
+        img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
+        cv2.imwrite(image_file,img)
+
     return {
         "src": "data:{0};base64,{1}".format(image.content_type, encoded_src)
     }
@@ -31,7 +40,7 @@ files = glob.glob('./src/*.docx')
 
 for file in files:
   with open(file, 'rb') as docx_file:
-    result = mammoth.convert_to_html(docx_file)
+    result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(convert_image))
     # result = mammoth.convert_to_html(docx_file)
     source = result.value
 
