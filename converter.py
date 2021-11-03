@@ -18,15 +18,15 @@ def convert_image(image):
 
 
     with image.open() as image_bytes:
-        # encoded_src = base64.b64encode(image_bytes.read()).decode("ascii")
-        encoded_src = image_bytes.read()
+        encoded_src = base64.b64encode(image_bytes.read()).decode("ascii")
+        # encoded_src = image_bytes.read()
         # directory = (os.getcwd())
         # image_path = directory + '/images/' '*' + 'g' + '*' + '.jpg'
         # files = glob.glob(image_path)
         uniqid = str(uuid.uuid4())
         image_file=r"images/" + uniqid + ".jpg"
-        # img_binary = base64.b64decode(encoded_src)
-        img_binary = encoded_src
+        img_binary = base64.b64decode(encoded_src)
+        # img_binary = encoded_src
         jpg=np.frombuffer(img_binary,dtype=np.uint8)
 
         img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
