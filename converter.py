@@ -1,17 +1,10 @@
 import mammoth # docx → html
 import os # create file
 import glob # read file name
-import base64
-import cv2
-import numpy as np
-import io
-import uuid
 import shutil
-
+import re #regular expression
 from bs4 import BeautifulSoup # html linter
 from bs4 import Tag
-
-import re #regular expression
 
 class ImageWriter(object):
     def __init__(self, output_dir):
@@ -27,9 +20,9 @@ class ImageWriter(object):
 
         self._image_number += 1
 
-        return {"src": image_filename}
+        return {"src": "images/" + image_filename}
 
-outdir = 'images'
+outdir = './dist/images'
 files = glob.glob('./src/*.docx')
 
 for file in files:
@@ -54,8 +47,8 @@ for file in files:
     # paragraph
     source = source.replace('<p>', '<p class="">')
 
-    # Image (Image is not supported, so a dummy image will be displayed)
-    # source = re.sub('<img src=\"(.*?)\"', '<img src="https://placehold.jp/150x150.png"', source)
+    # Image
+    source = source.replace('<img', '<img class="" ')
 
     # list
     source =source.replace('<ul>', '<ul class="">')
