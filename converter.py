@@ -6,42 +6,36 @@ import cv2
 import numpy as np
 import io
 import uuid
+import shutil
 
 from bs4 import BeautifulSoup # html linter
 from bs4 import Tag
 
 import re #regular expression
 
-os.makedirs('images')
+class ImageWriter(object):
+    def __init__(self, output_dir):
+        self._output_dir = output_dir
+        self._image_number = 1
 
-def convert_image(image):
+    def __call__(self, element):
+        extension = element.content_type.partition("/")[2]
+        image_filename = "{0}.{1}".format(self._image_number, extension)
+        with open(os.path.join(self._output_dir, image_filename), "wb") as image_dest:
+            with element.open() as image_source:
+                shutil.copyfileobj(image_source, image_dest)
 
+        self._image_number += 1
 
-    with image.open() as image_bytes:
-        encoded_src = base64.b64encode(image_bytes.read()).decode("ascii")
-        # encoded_src = image_bytes.read()
-        # directory = (os.getcwd())
-        # image_path = directory + '/images/' '*' + 'g' + '*' + '.jpg'
-        # files = glob.glob(image_path)
-        uniqid = str(uuid.uuid4())
-        image_file=r"images/" + uniqid + ".jpg"
-        img_binary = base64.b64decode(encoded_src)
-        # img_binary = encoded_src
-        jpg=np.frombuffer(img_binary,dtype=np.uint8)
+        return {"src": image_filename}
 
-        img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
-        cv2.imwrite(image_file,img)
-
-    return {
-        "src": "data:{0};base64,{1}".format(image.content_type, encoded_src)
-    }
-
+outdir = 'images'
 files = glob.glob('./src/*.docx')
 
 for file in files:
   with open(file, 'rb') as docx_file:
-    result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(convert_image))
-    # result = mammoth.convert_to_html(docx_file)
+    convert_image = mammoth.images.inline(ImageWriter(outdir))
+    result = mammoth.convert_to_html(docx_file,convert_image=convert_image)
     source = result.value
 
     # --------------------- class setting start ---------------------
