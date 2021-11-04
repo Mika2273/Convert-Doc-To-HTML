@@ -17,8 +17,7 @@ class ImageWriter(object):
         image_filename = "{0}.{1}".format(self._image_id, extension)
         with open(os.path.join(self._output_dir, image_filename), "wb") as image_dest:
             with element.open() as image_source:
-                shutil.copyfileobj(image_source, image_dest)
-
+              shutil.copyfileobj(image_source, image_dest)
 
         return {"src": "images/" + image_filename}
 
