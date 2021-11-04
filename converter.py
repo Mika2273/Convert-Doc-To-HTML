@@ -2,6 +2,7 @@ import mammoth # docx → html
 import os # create file
 import glob # read file name
 import shutil
+import uuid
 import re #regular expression
 from bs4 import BeautifulSoup # html linter
 from bs4 import Tag
@@ -9,16 +10,15 @@ from bs4 import Tag
 class ImageWriter(object):
     def __init__(self, output_dir):
         self._output_dir = output_dir
-        self._image_number = 1
 
     def __call__(self, element):
         extension = element.content_type.partition("/")[2]
-        image_filename = "{0}.{1}".format(self._image_number, extension)
+        self._image_id = str(uuid.uuid4())
+        image_filename = "{0}.{1}".format(self._image_id, extension)
         with open(os.path.join(self._output_dir, image_filename), "wb") as image_dest:
             with element.open() as image_source:
                 shutil.copyfileobj(image_source, image_dest)
 
-        self._image_number += 1
 
         return {"src": "images/" + image_filename}
 
