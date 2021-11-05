@@ -2,7 +2,7 @@
 This is a tool for converting word documents into HTML. It uses Python's open source library, 'mammoth'.
 
 ## How to use?
-In the root, prepare a folder 'src' for the word documents to be converted, and a folder 'dist' where the generated HTML will be saved. Also, prepare a folder 'images' for the images in 'dist'.
+In the root, prepare a folder 'src' for the word documents to be converted, and a folder 'dist' where the generated HTML will be saved.
 Run `python3 converter.py`
 ## How to set up a python environment
 1. Setting Up Python 3

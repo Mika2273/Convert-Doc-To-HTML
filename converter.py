@@ -2,7 +2,6 @@ import mammoth # docx → html
 import os # create file
 import glob # read file name
 import shutil
-import uuid
 import re #regular expression
 from bs4 import BeautifulSoup # html linter
 from bs4 import Tag
